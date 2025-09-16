@@ -62,7 +62,11 @@ Download the injuries data and load it into an object called `nfl_injuries`:
 
 ```{r}
 nfl_injuries_raw <- progressr::with_progress(
+<<<<<<< Updated upstream
   nflreadr::load_injuries(seasons = TRUE))
+=======
+  nflreadr::load_injuries())
+>>>>>>> Stashed changes
 ```
 
 # Characteristics of the Data

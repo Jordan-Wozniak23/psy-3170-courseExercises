@@ -66,7 +66,7 @@ load("..Data/player_stats_weekly.Rdata")
 
 Create a histogram of weekly fantasy points among QBs, RBs, WRs, and TEs (the variable is `fantasyPoints`):
 
-"```{r}"
+```{r}
 ggplot2::ggplot(
   data = player_stats_weekly %>%
     filter(position_group %in% c("QB","RB","WR","TE")),
@@ -82,7 +82,7 @@ ggplot2::ggplot(
     y = "Count",
     title = "Histogram of Fantasy Points within Position"
   )
-"```"
+```
 
 ## Density Plot
 

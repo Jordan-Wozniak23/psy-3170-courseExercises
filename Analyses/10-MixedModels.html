@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jordan Wozniak">
-<meta name="dcterms.date" content="2025-09-25">
+<meta name="dcterms.date" content="2025-09-30">
 
 <title>10-Mixed Models</title>
 <style>
@@ -3130,7 +3130,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 25, 2025</p>
+      <p class="date">September 30, 2025</p>
     </div>
   </div>
   
@@ -3215,10 +3215,11 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>player_stats_seasonal_offense_subset <span class="ot">&lt;-</span> player_stats_weekly <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(position_group <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;QB&quot;</span>,<span class="st">&quot;RB&quot;</span>,<span class="st">&quot;WR&quot;</span>,<span class="st">&quot;TE&quot;</span>) <span class="sc">|</span> position <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;K&quot;</span>))</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>player_stats_seasonal_offense_subset<span class="sc">$</span>position[<span class="fu">which</span>(player_stats_seasonal_offense_subset<span class="sc">$</span>position <span class="sc">==</span> <span class="st">&quot;HB&quot;</span>)] <span class="ot">&lt;-</span> <span class="st">&quot;RB&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>player_stats_seasonal_offense_subset<span class="sc">$</span>position[<span class="fu">which</span>(player_stats_seasonal_offense_subset<span class="sc">$</span>position <span class="sc">==</span> <span class="st">&quot;RB&quot;</span>)] <span class="ot">&lt;-</span> <span class="st">&quot;RB&quot;</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>player_stats_seasonal_offense_subset<span class="sc">$</span>player_idFactor <span class="ot">&lt;-</span> <span class="fu">factor</span>(player_stats_seasonal_offense_subset<span class="sc">$</span>player_id)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>player_stats_seasonal_offense_subset<span class="sc">$</span>positionFactor <span class="ot">&lt;-</span> <span class="fu">factor</span>(player_stats_seasonal_offense_subset<span class="sc">$</span>position)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>player_stats_seasonal_offense_subset<span class="sc">$</span>positionFactor <span class="ot">&lt;-</span> <span class="fu">factor</span>(player_stats_seasonal_offense_subset<span class="sc">$</span>position)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>See values of position:</p>
@@ -3229,8 +3230,8 @@ vertical-align: -.125em;
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-   FB     K    QB    RB    TE    WR 
- 6466 13767 16103 37818 27438 56352 </code></pre>
+   FB    HB     K    QB    RB    TE    WR 
+ 6466    17 13767 16103 37801 27438 56352 </code></pre>
 </div>
 </div>
 </section>
@@ -3276,7 +3277,7 @@ Residual standard error: 7.718 on 157943 degrees of freedom</code></pre>
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pointsPerWeek_position <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  fantasyPoints <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> position,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  fantasyPoints <span class="sc">~</span> position,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> player_stats_seasonal_offense_subset,</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">na.action =</span> <span class="st">&quot;na.exclude&quot;</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -3286,7 +3287,7 @@ Residual standard error: 7.718 on 157943 degrees of freedom</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = fantasyPoints ~ 1 + position, data = player_stats_seasonal_offense_subset, 
+lm(formula = fantasyPoints ~ position, data = player_stats_seasonal_offense_subset, 
     na.action = &quot;na.exclude&quot;)
 
 Residuals:
@@ -3295,18 +3296,19 @@ Residuals:
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  3.12915    0.09186   34.06   &lt;2e-16 ***
-positionK    3.24362    0.11136   29.13   &lt;2e-16 ***
-positionQB  10.16369    0.10875   93.46   &lt;2e-16 ***
-positionRB   5.10937    0.09940   51.40   &lt;2e-16 ***
-positionTE   2.52532    0.10211   24.73   &lt;2e-16 ***
-positionWR   4.89697    0.09699   50.49   &lt;2e-16 ***
+(Intercept)  3.12915    0.09186  34.065   &lt;2e-16 ***
+positionHB   0.40026    1.79385   0.223    0.823    
+positionK    3.24362    0.11136  29.127   &lt;2e-16 ***
+positionQB  10.16369    0.10875  93.460   &lt;2e-16 ***
+positionRB   5.11149    0.09941  51.421   &lt;2e-16 ***
+positionTE   2.52532    0.10211  24.731   &lt;2e-16 ***
+positionWR   4.89697    0.09699  50.492   &lt;2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-Residual standard error: 7.387 on 157938 degrees of freedom
-Multiple R-squared:  0.08406,   Adjusted R-squared:  0.08403 
-F-statistic:  2899 on 5 and 157938 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 7.387 on 157937 degrees of freedom
+Multiple R-squared:  0.0841,    Adjusted R-squared:  0.08407 
+F-statistic:  2417 on 6 and 157937 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </section>
@@ -3425,10 +3427,10 @@ F-statistic:  2899 on 5 and 157938 DF,  p-value: &lt; 2.2e-16</code></pre>
 <pre><code>Analysis of Variance Table
 
 Model 1: fantasyPoints ~ 1
-Model 2: fantasyPoints ~ 1 + position
+Model 2: fantasyPoints ~ position
   Res.Df     RSS Df Sum of Sq      F    Pr(&gt;F)    
 1 157943 9408409                                  
-2 157938 8617510  5    790899 2899.1 &lt; 2.2e-16 ***
+2 157937 8617133  6    791276 2417.1 &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>

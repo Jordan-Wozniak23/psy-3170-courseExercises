@@ -276,7 +276,7 @@ ggplot2::ggplot(
   data = INSERT,
   mapping = aes(
     x = age,
-    y = INSERT,
+    y = fantasyPoints,
     color = position
   )
 ) + 

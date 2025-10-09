@@ -1,6 +1,6 @@
 ---
 title: "11-Causal Inference"
-author: "Insert Your Name Here"
+author: "Jordan Wozniak"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 format:
   html:
@@ -57,10 +57,10 @@ Draw a causal diagram (i.e., directed acyclic graph [DAG]) of the hypothesized c
 
 ```{r}
 causalDiagram1 <- ggdag::dagify(
-  coachConfidenceInPlayer ~ INSERT + INSERT,
-  snapShare ~ INSERT,
-  touchesOrTargets ~ INSERT,
-  fantasyPoints ~ INSERT
+  coachConfidenceInPlayer ~ pastPerformance + injuryStatus,
+  snapShare ~ coachConfidenceInPlayer,
+  touchesOrTargets ~ snapShare,
+  fantasyPoints ~ touchesOrTargets
 )
 
 ggdag::ggdag(causalDiagram1, text_col = "orange") + theme_dag_blank()
@@ -74,8 +74,8 @@ Should you control for snap share?
 ```{r}
 dagitty::adjustmentSets(
   causalDiagram1,
-  exposure = "INSERT",
-  outcome = "INSERT",
+  exposure = "pastPerformance",
+  outcome = "fantasyPoints",
   effect = "total")
 ```
 
@@ -91,7 +91,9 @@ Draw the hypothesized causal diagram:
 
 ```{r}
 causalDiagram2 <- ggdag::dagify(
- #INSERT ALL HYPOTHESIZED CAUSAL EFFECTS
+quarterbackIQ ~ age + nutrition,
+averageTimeToThrow ~ quarterbackIQ + age + offensiveLineStrength + defensiveLineStrength
+  
 )
 
 ggdag::ggdag(causalDiagram2, text_col = "orange") + theme_dag_blank()
@@ -103,8 +105,8 @@ Using the `adjustmentSets()` function, determine which variable(s) in the model 
 ```{r}
 dagitty::adjustmentSets(
   causalDiagram2,
-  exposure = "INSERT",
-  outcome = "INSERT",
+  exposure = "quarterbackIQ",
+  outcome = "averageTimeToThrow",
   effect = "total")
 ```
 

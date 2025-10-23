@@ -1,6 +1,6 @@
 ---
 title: "16-Evaluation of Prediction/Forecasting Accuracy: Binary Classification"
-author: "Insert Your Name Here"
+author: "Jordan Wozniak"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 format:
   html:
@@ -137,6 +137,7 @@ Using a Running Back's rushing yards in a given game, we will predict whether or
 First, we prepare the data:
 
 ```{r}
+dplyr::lag()
 player_stats_weekly_example <- player_stats_weekly %>% 
   filter(position == "RB") %>% 
   arrange(player_id, season, week) %>% 
@@ -155,9 +156,9 @@ Provide the accuracy for predicting whether or not the Running Back will get 150
 
 ```{r}
 petersenlab::accuracyAtCutoff(
-  predicted = player_stats_weekly_example$INSERT,
-  actual = player_stats_weekly_example$INSERT,
-  cutoff = INSERT
+  predicted = player_stats_weekly_example$rushing_yards_priorGame,
+  actual = player_stats_weekly_example$rush_150_yds,
+  cutoff = 100
 )
 ```
 
@@ -165,35 +166,35 @@ Now, lower the cutoff to 50 rushing yards from their previous game:
 
 ```{r}
 petersenlab::accuracyAtCutoff(
-  predicted = player_stats_weekly_example$INSERT,
-  actual = player_stats_weekly_example$INSERT,
-  cutoff = INSERT
+  predicted = player_stats_weekly_example$rushing_yards_priorGame,
+  actual = player_stats_weekly_example$rush_150_yds,
+  cutoff = 50
 )
 ```
 
 What happened to each of the following (did they increase or decrease)?:
 
-- sensitivity (SN)
-- specificity (SP)
-- positive predictive value (PPV)
-- negative predictive value (NPV)
+- sensitivity (SN) "Increase"
+- specificity (SP) "Decrease"
+- positive predictive value (PPV) "Decrease"
+- negative predictive value (NPV) "Increase"
 
 Now, raise the cutoff to 150 rushing yards from their previous game:
 
 ```{r}
 petersenlab::accuracyAtCutoff(
-  predicted = player_stats_weekly_example$INSERT,
-  actual = player_stats_weekly_example$INSERT,
-  cutoff = INSERT
+  predicted = player_stats_weekly_example$rushing_yards_priorGame,
+  actual = player_stats_weekly_example$rush_150_yds,
+  cutoff = 150
 )
 ```
 
 What happened to each of the following (did they increase or decrease)?:
 
-- sensitivity (SN)
-- specificity (SP)
-- positive predictive value (PPV)
-- negative predictive value (NPV)
+- sensitivity (SN) "Decrease"
+- specificity (SP) "Increase"
+- positive predictive value (PPV) "Increase"
+- negative predictive value (NPV) "Increase"
 
 ## Accuracy at Each Possible Cutoff
 
@@ -201,8 +202,8 @@ Using a Running Back's rushing yards in a given game, find the accuracy at each 
 
 ```{r}
 petersenlab::accuracyAtEachCutoff(
-  predicted = player_stats_weekly_example$INSERT,
-  actual = player_stats_weekly_example$INSERT
+  predicted = player_stats_weekly_example$rushing_yards_priorGame,
+  actual = player_stats_weekly_example$rush_150_yds
 )
 ```
 

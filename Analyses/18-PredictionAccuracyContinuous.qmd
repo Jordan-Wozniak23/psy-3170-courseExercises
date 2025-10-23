@@ -138,10 +138,10 @@ First, we prepare the data:
 
 ```{r}
 projectionsWithActuals_weekly_wr <- projectionsWithActuals_weekly %>% 
-  filter(position == INSERT)
+  filter(position == "WR")
 
 crowdAveragedProjectionsWithActuals_weekly_wr <- crowdAveragedProjectionsWithActuals_weekly %>% 
-  filter(position == INSERT)
+  filter(position == "WR")
 ```
 
 ## Accuracy Indices

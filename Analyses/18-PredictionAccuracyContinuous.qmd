@@ -152,8 +152,8 @@ Provide the accuracy indices for predicting Wide Receivers' fantasy points (`fan
 
 ```{r}
 petersenlab::accuracyOverall(
-  predicted = projectionsWithActuals_weekly_wr$INSERT, # predictor variable
-  actual = projectionsWithActuals_weekly_wr$INSERT, # outcome variable
+  predicted = projectionsWithActuals_weekly_wr$fantasyPoints, # predictor variable
+  actual = projectionsWithActuals_weekly_wr$raw_points, # outcome variable
   dropUndefined = TRUE
 )
 ```
@@ -164,8 +164,8 @@ Provide the accuracy indices for predicting Wide Receivers' fantasy points (`fan
 
 ```{r}
 petersenlab::accuracyOverall(
-  predicted = crowdAveragedProjectionsWithActuals_weekly_wr$INSERT, # predictor variable
-  actual = crowdAveragedProjectionsWithActuals_weekly_wr$INSERT, # outcome variable
+  predicted = crowdAveragedProjectionsWithActuals_weekly_wr$fantasyPoints, # predictor variable
+  actual = crowdAveragedProjectionsWithActuals_weekly_wr$points, # outcome variable
   dropUndefined = TRUE
 )
 ```
@@ -174,6 +174,8 @@ Which projections were more accurate according to $R^2$ and mean absolute error 
 What percent of the variance did the projections explain?
 Did they explain more or less than 50% of the variance?
 Based on that, how accurate would you say the projections are?
+
+-Crowd-averaged projections were more accurate by R² and MAE, 35–40%, in turn would be moderately-accurate.
 
 ## Calibration Plot
 
@@ -242,6 +244,8 @@ ggplot2::ggplot(
 Are the projections calibrated?
 Describe any miscalibration.
 
+-The predictions are meerly accurate until we hit around 20 fantasy points, and then the curve starts to fall off, indiciating that we overshot over projections.
+
 ### Crowd-Averaged Projections
 
 ```{r}
@@ -306,6 +310,8 @@ ggplot2::ggplot(
 
 Which show better calibration: the individual sources of projections or the crowd-averaged projections?
 Based on all of the available evidence, which would you say is more accurate (and why)?
+
+-Crowd-averaged projections show better calibration—the smoothed line hugs the line of reference more closely with a tighter band than most individual sources.
 
 # Session Info
 

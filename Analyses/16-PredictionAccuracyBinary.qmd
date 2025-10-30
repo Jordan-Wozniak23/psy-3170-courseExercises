@@ -137,7 +137,6 @@ Using a Running Back's rushing yards in a given game, we will predict whether or
 First, we prepare the data:
 
 ```{r}
-dplyr::lag()
 player_stats_weekly_example <- player_stats_weekly %>% 
   filter(position == "RB") %>% 
   arrange(player_id, season, week) %>% 
@@ -149,10 +148,6 @@ player_stats_weekly_example %>%
   select(player_id, season, week, rushing_yards, rushing_yards_priorGame) %>% 
   head()
 ```
-
-## Accuracy at a Particular Cutoff
-
-Provide the accuracy for predicting whether or not the Running Back will get 150+ rushing yards in their next game (`rush_150_yds`) using a cutoff of 100 rushing yards from their previous game (`rushing_yards_priorGame`):
 
 ```{r}
 petersenlab::accuracyAtCutoff(

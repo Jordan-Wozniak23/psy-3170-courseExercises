@@ -3100,9 +3100,8 @@ vertical-align: -.125em;
   </ul></li>
   <li><a href="#predicting-whether-a-rb-will-get-150-rushing-yards-in-a-game" id="toc-predicting-whether-a-rb-will-get-150-rushing-yards-in-a-game" class="nav-link" data-scroll-target="#predicting-whether-a-rb-will-get-150-rushing-yards-in-a-game"><span class="header-section-number">3</span> Predicting Whether a RB Will Get 150+ Rushing Yards in a Game</a>
   <ul>
-  <li><a href="#accuracy-at-a-particular-cutoff" id="toc-accuracy-at-a-particular-cutoff" class="nav-link" data-scroll-target="#accuracy-at-a-particular-cutoff"><span class="header-section-number">3.1</span> Accuracy at a Particular Cutoff</a></li>
-  <li><a href="#accuracy-at-each-possible-cutoff" id="toc-accuracy-at-each-possible-cutoff" class="nav-link" data-scroll-target="#accuracy-at-each-possible-cutoff"><span class="header-section-number">3.2</span> Accuracy at Each Possible Cutoff</a></li>
-  <li><a href="#receiver-operating-characteristic-roc-curve" id="toc-receiver-operating-characteristic-roc-curve" class="nav-link" data-scroll-target="#receiver-operating-characteristic-roc-curve"><span class="header-section-number">3.3</span> Receiver Operating Characteristic (ROC) Curve</a></li>
+  <li><a href="#accuracy-at-each-possible-cutoff" id="toc-accuracy-at-each-possible-cutoff" class="nav-link" data-scroll-target="#accuracy-at-each-possible-cutoff"><span class="header-section-number">3.1</span> Accuracy at Each Possible Cutoff</a></li>
+  <li><a href="#receiver-operating-characteristic-roc-curve" id="toc-receiver-operating-characteristic-roc-curve" class="nav-link" data-scroll-target="#receiver-operating-characteristic-roc-curve"><span class="header-section-number">3.2</span> Receiver Operating Characteristic (ROC) Curve</a></li>
   </ul></li>
   <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">4</span> Session Info</a></li>
   </ul>
@@ -3304,23 +3303,16 @@ vertical-align: -.125em;
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">lag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error in dplyr::lag(): argument &quot;x&quot; is missing, with no default</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_example <span class="ot">&lt;-</span> player_stats_weekly <span class="sc">%&gt;%</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">==</span> <span class="st">&quot;RB&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(player_id, season, week) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(player_id, season) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rushing_yards_priorGame =</span> <span class="fu">lag</span>(rushing_yards)) <span class="sc">%&gt;%</span> <span class="co"># obtain a player&#39;s rushing yards from their prior game using the dplyr::lag() function</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_example <span class="sc">%&gt;%</span> </span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(player_id, season, week, rushing_yards, rushing_yards_priorGame) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_example <span class="ot">&lt;-</span> player_stats_weekly <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">==</span> <span class="st">&quot;RB&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(player_id, season, week) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(player_id, season) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rushing_yards_priorGame =</span> <span class="fu">lag</span>(rushing_yards)) <span class="sc">%&gt;%</span> <span class="co"># obtain a player&#39;s rushing yards from their prior game using the dplyr::lag() function</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_example <span class="sc">%&gt;%</span> </span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(player_id, season, week, rushing_yards, rushing_yards_priorGame) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
@@ -3334,17 +3326,14 @@ vertical-align: -.125em;
 6 00-0000003   1999     9            23                      39</code></pre>
 </div>
 </div>
-<section id="accuracy-at-a-particular-cutoff" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="accuracy-at-a-particular-cutoff"><span class="header-section-number">3.1</span> Accuracy at a Particular Cutoff</h2>
-<p>Provide the accuracy for predicting whether or not the Running Back will get 150+ rushing yards in their next game (<code>rush_150_yds</code>) using a cutoff of 100 rushing yards from their previous game (<code>rushing_yards_priorGame</code>):</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtCutoff</span>(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="dv">100</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtCutoff</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="dv">100</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  cutoff  TP    TN   FP  FN         SR         BR percentAccuracy
@@ -3369,11 +3358,11 @@ vertical-align: -.125em;
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtCutoff</span>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="dv">50</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtCutoff</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="dv">50</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  cutoff  TP    TN   FP  FN        SR         BR percentAccuracy
@@ -3405,11 +3394,11 @@ vertical-align: -.125em;
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtCutoff</span>(</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="dv">150</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtCutoff</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cutoff =</span> <span class="dv">150</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  cutoff TP    TN  FP  FN         SR         BR percentAccuracy
@@ -3437,17 +3426,16 @@ vertical-align: -.125em;
 <li>positive predictive value (PPV) “Increase”</li>
 <li>negative predictive value (NPV) “Increase”</li>
 </ul>
-</section>
-<section id="accuracy-at-each-possible-cutoff" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="accuracy-at-each-possible-cutoff"><span class="header-section-number">3.2</span> Accuracy at Each Possible Cutoff</h2>
+<section id="accuracy-at-each-possible-cutoff" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="accuracy-at-each-possible-cutoff"><span class="header-section-number">3.1</span> Accuracy at Each Possible Cutoff</h2>
 <p>Using a Running Back’s rushing yards in a given game, find the accuracy at each possible cutoff.</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtEachCutoff</span>(</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyAtEachCutoff</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> player_stats_weekly_example<span class="sc">$</span>rushing_yards_priorGame,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>rush_150_yds</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    cutoff  TP    TN    FP  FN            SR         BR percentAccuracy
@@ -5748,16 +5736,16 @@ vertical-align: -.125em;
 </div>
 </div>
 </section>
-<section id="receiver-operating-characteristic-roc-curve" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="receiver-operating-characteristic-roc-curve"><span class="header-section-number">3.3</span> Receiver Operating Characteristic (ROC) Curve</h2>
+<section id="receiver-operating-characteristic-roc-curve" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="receiver-operating-characteristic-roc-curve"><span class="header-section-number">3.2</span> Receiver Operating Characteristic (ROC) Curve</h2>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rocCurve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> player_stats_weekly_example,</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">response =</span> INSERT,</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> INSERT,</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">smooth =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>rocCurve <span class="ot">&lt;-</span> pROC<span class="sc">::</span><span class="fu">roc</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> player_stats_weekly_example,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">response =</span> INSERT,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">predictor =</span> INSERT,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">smooth =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in roc.data.frame(data = player_stats_weekly_example, response =
@@ -5769,17 +5757,17 @@ the `roc_` function instead?</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>rocCurve<span class="sc">$</span>auc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>rocCurve<span class="sc">$</span>auc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
 <pre><code>Error: object &#39;rocCurve&#39; not found</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  rocCurve,</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legacy.axes =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">print.auc =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  rocCurve,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">legacy.axes =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">print.auc =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
 <pre><code>Error: object &#39;rocCurve&#39; not found</code></pre>
@@ -5793,7 +5781,7 @@ the `roc_` function instead?</code></pre>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.5.1 (2025-06-13 ucrt)

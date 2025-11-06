@@ -133,8 +133,8 @@ Now, let's use linear regression with multiple predictors (`ageCentered20`, `age
 
 ```{r}
 linearRegression_multiplePredictors <- lm(
-  INSERT ~ fantasyPoints + ageCentered20 + ageCentered20Quadratic + years_of_experience + receiving_yards + receiving_tds + receiving_air_yards + receiving_yards_after_catch + racr + targets + target_share, # RACR = receiving_yards / receiving_air_yards
-  data = INSERT,
+  receptions ~ fantasyPoints + ageCentered20 + ageCentered20Quadratic + years_of_experience + receiving_yards + receiving_tds + receiving_air_yards + receiving_yards_after_catch + racr + targets + target_share, # RACR = receiving_yards / receiving_air_yards
+  data = player_stats_weekly,
   na.action = "na.exclude"
 )
 

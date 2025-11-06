@@ -9,7 +9,7 @@
 <meta name="author" content="Insert Your Name Here">
 <meta name="dcterms.date" content="2025-10-30">
 
-<title>18-Evaluation of Prediction/Forecasting Accuracy: Continuous Outcomes</title>
+<title>20-Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3263,16 +3263,9 @@ window.Quarto = {
   </ul></li>
   <li><a href="#predicting-wr-fantasy-points" id="toc-predicting-wr-fantasy-points" class="nav-link" data-scroll-target="#predicting-wr-fantasy-points"><span class="header-section-number">3</span> Predicting WR Fantasy Points</a>
   <ul>
-  <li><a href="#accuracy-indices" id="toc-accuracy-indices" class="nav-link" data-scroll-target="#accuracy-indices"><span class="header-section-number">3.1</span> Accuracy Indices</a>
-  <ul class="collapse">
-  <li><a href="#individual-sources-of-projections" id="toc-individual-sources-of-projections" class="nav-link" data-scroll-target="#individual-sources-of-projections"><span class="header-section-number">3.1.1</span> Individual Sources of Projections</a></li>
-  <li><a href="#crowd-averaged-projections" id="toc-crowd-averaged-projections" class="nav-link" data-scroll-target="#crowd-averaged-projections"><span class="header-section-number">3.1.2</span> Crowd-Averaged Projections</a></li>
-  </ul></li>
-  <li><a href="#calibration-plot" id="toc-calibration-plot" class="nav-link" data-scroll-target="#calibration-plot"><span class="header-section-number">3.2</span> Calibration Plot</a>
-  <ul class="collapse">
-  <li><a href="#individual-sources-of-projections-1" id="toc-individual-sources-of-projections-1" class="nav-link" data-scroll-target="#individual-sources-of-projections-1"><span class="header-section-number">3.2.1</span> Individual Sources of Projections</a></li>
-  <li><a href="#crowd-averaged-projections-1" id="toc-crowd-averaged-projections-1" class="nav-link" data-scroll-target="#crowd-averaged-projections-1"><span class="header-section-number">3.2.2</span> Crowd-Averaged Projections</a></li>
-  </ul></li>
+  <li><a href="#linear-regression-with-one-predictor" id="toc-linear-regression-with-one-predictor" class="nav-link" data-scroll-target="#linear-regression-with-one-predictor"><span class="header-section-number">3.1</span> Linear Regression with One Predictor</a></li>
+  <li><a href="#linear-regression-with-multiple-predictors" id="toc-linear-regression-with-multiple-predictors" class="nav-link" data-scroll-target="#linear-regression-with-multiple-predictors"><span class="header-section-number">3.2</span> Linear Regression with Multiple Predictors</a></li>
+  <li><a href="#machine-learning-elastic-net-regression" id="toc-machine-learning-elastic-net-regression" class="nav-link" data-scroll-target="#machine-learning-elastic-net-regression"><span class="header-section-number">3.3</span> Machine Learning: Elastic Net Regression</a></li>
   </ul></li>
   <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">4</span> Session Info</a></li>
   </ul>
@@ -3282,7 +3275,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">18-Evaluation of Prediction/Forecasting Accuracy: Continuous Outcomes</h1>
+<h1 class="title">20-Machine Learning</h1>
 </div>
 
 
@@ -3336,13 +3329,15 @@ window.Quarto = {
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;petersenlab&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;pROC&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;magrittr&quot;</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;viridis&quot;</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;viridisLite&quot;</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;msir&quot;</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidymodels&quot;</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;future&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;missRanger&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;powerjoin&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidymodels&quot;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;LongituRF&quot;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;gpboost&quot;</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;effectsize&quot;</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;knitr&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -3361,25 +3356,14 @@ window.Quarto = {
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;./Data/player_stats_weekly.RData&quot;</span>) <span class="co"># if running locally</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;./Data/players_projections_weekly.RData&quot;</span>) <span class="co"># if running locally</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;./Data/nfl_playerIDs.RData&quot;</span>) <span class="co"># if running locally</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;./Data/player_stats_weekly.RData&quot;</span>) <span class="co"># if running locally</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;../Data/player_stats_weekly.RData&quot;</span>) <span class="co"># if &quot;rendering&quot; (which uses the Analyses folder as the relative path)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;../Data/players_projections_weekly.RData&quot;</span>) <span class="co"># if &quot;rendering&quot; (which uses the Analyses folder as the relative path)</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;../Data/nfl_playerIDs.RData&quot;</span>) <span class="co"># if &quot;rendering&quot; (which uses the Analyses folder as the relative path)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&quot;../Data/player_stats_weekly.RData&quot;</span>) <span class="co"># if &quot;rendering&quot; (which uses the Analyses folder as the relative path)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file
-&#39;../Data/nfl_playerIDs.RData&#39;, probable reason &#39;No such file or directory&#39;</code></pre>
-</div>
-<div class="cell-output cell-output-error">
-<pre><code>Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection</code></pre>
-</div>
 </div>
 </section>
 <section id="prepare-data" class="level2" data-number="2.5">
@@ -3387,329 +3371,386 @@ window.Quarto = {
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_subset <span class="ot">&lt;-</span> player_stats_weekly <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(player_id))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>nfl_playerIDs_subset <span class="ot">&lt;-</span> nfl_playerIDs <span class="sc">%&gt;%</span> </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(gsis_id)) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(gsis_id, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="co"># keep only rows that do not have duplicate values of gsis_id</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">&quot;team&quot;</span>, <span class="st">&quot;position&quot;</span>, <span class="st">&quot;height&quot;</span>, <span class="st">&quot;weight&quot;</span>, <span class="st">&quot;age&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_example <span class="ot">&lt;-</span> player_stats_weekly <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">==</span> <span class="st">&quot;WR&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(player_id, season, week) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(player_id, season) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fantasyPoints_nextGame =</span> <span class="fu">lead</span>(fantasyPoints)) <span class="sc">%&gt;%</span> <span class="co"># obtain a player&#39;s rushing yards from their prior game using the dplyr::lag() function</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(player_id, season, week, fantasyPoints, fantasyPoints_nextGame, ageCentered20, ageCentered20Quadratic, years_of_experience, receiving_yards, receiving_tds, receiving_air_yards, receiving_yards_after_catch, racr, targets, target_share) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="co"># drop rows with missing values (machine learning cannot handle missing values; an alternative approach if you don&#39;t want to drop rows with missing values would be to impute missing values)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_example <span class="sc">%&gt;%</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(player_id, season, week, fantasyPoints, fantasyPoints_nextGame) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;nfl_playerIDs&#39; not found</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  player_id  season  week fantasyPoints fantasyPoints_nextGame
+  &lt;chr&gt;       &lt;int&gt; &lt;int&gt;         &lt;dbl&gt;                  &lt;dbl&gt;
+1 00-0000145   1999     1          27.4                   17.7
+2 00-0000145   1999     2          17.7                    9.9
+3 00-0000145   1999     3           9.9                    3.4
+4 00-0000145   1999     4           3.4                    4.5
+5 00-0000145   1999     5           4.5                    0  
+6 00-0000145   1999     8          19.3                    7.2</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>players_projectedPoints_weekly_combined<span class="sc">$</span>season <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(players_projectedPoints_weekly_combined<span class="sc">$</span>season)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>players_projections_weekly_average_merged<span class="sc">$</span>season <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(players_projections_weekly_average_merged<span class="sc">$</span>season)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>player_stats_weekly_subset_IDs <span class="ot">&lt;-</span> <span class="fu">left_join</span>(</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  player_stats_weekly_subset,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  nfl_playerIDs_subset,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;player_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;gsis_id&quot;</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(mfl_id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_predictions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> player_stats_weekly_example<span class="sc">$</span>fantasyPoints_nextGame</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;nfl_playerIDs_subset&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>projectionsWithActuals_weekly <span class="ot">&lt;-</span> <span class="fu">full_join</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  player_stats_weekly_subset_IDs,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  players_projectedPoints_weekly_combined,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;mfl_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>, <span class="st">&quot;season&quot;</span>, <span class="st">&quot;week&quot;</span>),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;_proj&quot;</span>),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;player_stats_weekly_subset_IDs&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>crowdAveragedProjectionsWithActuals_weekly <span class="ot">&lt;-</span> <span class="fu">full_join</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  player_stats_weekly_subset_IDs,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  players_projections_weekly_average_merged,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;mfl_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>, <span class="st">&quot;season&quot;</span>, <span class="st">&quot;week&quot;</span>),</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;_proj&quot;</span>),</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;player_stats_weekly_subset_IDs&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>projectionsWithActuals_weekly <span class="ot">&lt;-</span> projectionsWithActuals_weekly <span class="sc">%&gt;%</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;player_id_season_week&quot;</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    player_id,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    season,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    week,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">remove =</span> <span class="cn">FALSE</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;projectionsWithActuals_weekly&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>crowdAveragedProjectionsWithActuals_weekly <span class="ot">&lt;-</span> crowdAveragedProjectionsWithActuals_weekly <span class="sc">%&gt;%</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;player_id_season_week&quot;</span>,</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    player_id,</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    season,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    week,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">remove =</span> <span class="cn">FALSE</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;crowdAveragedProjectionsWithActuals_weekly&#39; not found</code></pre>
-</div>
 </div>
 </section>
 </section>
 <section id="predicting-wr-fantasy-points" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Predicting WR Fantasy Points</h1>
-<p>We will use crowd-averaged projections to predict Wide Receivers’ fantasy points. First, we prepare the data:</p>
+<p>We will use a variety of techniques to predict WR fantasy points.</p>
+<section id="linear-regression-with-one-predictor" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="linear-regression-with-one-predictor"><span class="header-section-number">3.1</span> Linear Regression with One Predictor</h2>
+<p>First, with the <code>player_stats_weekly_example</code> data file, let’s use linear regression using the WR’s fantasy points in a given game (<code>fantasyPoints</code>) to predict their fantasy points in the subsequent game (<code>fantasyPoints_nextGame</code>).</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>projectionsWithActuals_weekly_wr <span class="ot">&lt;-</span> projectionsWithActuals_weekly <span class="sc">%&gt;%</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">==</span> <span class="st">&quot;WR&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>linearRegression_onePredictor <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  INSERT <span class="sc">~</span> INSERT,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> INSERT,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">na.action =</span> <span class="st">&quot;na.exclude&quot;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;projectionsWithActuals_weekly&#39; not found</code></pre>
+<pre><code>Error in eval(mf, parent.frame()): object &#39;INSERT&#39; not found</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>crowdAveragedProjectionsWithActuals_weekly_wr <span class="ot">&lt;-</span> crowdAveragedProjectionsWithActuals_weekly <span class="sc">%&gt;%</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">==</span> <span class="st">&quot;WR&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(linearRegression_onePredictor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;crowdAveragedProjectionsWithActuals_weekly&#39; not found</code></pre>
+<pre><code>Error: object &#39;linearRegression_onePredictor&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(effectsize<span class="sc">::</span><span class="fu">standardize_parameters</span>(linearRegression_onePredictor), <span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;linearRegression_onePredictor&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model_predictions<span class="sc">$</span>linearRegression_onePredictor <span class="ot">&lt;-</span> <span class="fu">predict</span>(linearRegression_onePredictor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;linearRegression_onePredictor&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate Accuracy of Predictions</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyOverall</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> model_predictions<span class="sc">$</span>linearRegression_onePredictor,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> model_predictions<span class="sc">$</span>actual,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dropUndefined =</span> <span class="cn">TRUE</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error in abs(predicted): non-numeric argument to mathematical function</code></pre>
 </div>
 </div>
-<section id="accuracy-indices" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="accuracy-indices"><span class="header-section-number">3.1</span> Accuracy Indices</h2>
-<section id="individual-sources-of-projections" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="individual-sources-of-projections"><span class="header-section-number">3.1.1</span> Individual Sources of Projections</h3>
-<p>Provide the accuracy indices for predicting Wide Receivers’ fantasy points (<code>fantasyPoints</code>) from individual sources of projections of their fantasy points for that week (<code>raw_points</code>):</p>
+<p>What percent of the variance is explained by the model’s predictions?</p>
+</section>
+<section id="linear-regression-with-multiple-predictors" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="linear-regression-with-multiple-predictors"><span class="header-section-number">3.2</span> Linear Regression with Multiple Predictors</h2>
+<p>Now, let’s use linear regression with multiple predictors (<code>ageCentered20</code>, <code>ageCentered20Quadratic</code>, <code>years_of_experience</code>, <code>receiving_yards</code>, <code>receiving_tds</code>, <code>receiving_air_yards</code>, <code>receiving_yards_after_catch</code>, <code>racr</code>, <code>targets</code>, and <code>target_share</code>) to predict their fantasy points in the subsequent game (<code>fantasyPoints_nextGame</code>).</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyOverall</span>(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> projectionsWithActuals_weekly_wr<span class="sc">$</span>fantasyPoints, <span class="co"># predictor variable</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> projectionsWithActuals_weekly_wr<span class="sc">$</span>raw_points, <span class="co"># outcome variable</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dropUndefined =</span> <span class="cn">TRUE</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>linearRegression_multiplePredictors <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  receptions <span class="sc">~</span> fantasyPoints <span class="sc">+</span> ageCentered20 <span class="sc">+</span> ageCentered20Quadratic <span class="sc">+</span> years_of_experience <span class="sc">+</span> receiving_yards <span class="sc">+</span> receiving_tds <span class="sc">+</span> receiving_air_yards <span class="sc">+</span> receiving_yards_after_catch <span class="sc">+</span> racr <span class="sc">+</span> targets <span class="sc">+</span> target_share, <span class="co"># RACR = receiving_yards / receiving_air_yards</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> player_stats_weekly,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">na.action =</span> <span class="st">&quot;na.exclude&quot;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(linearRegression_multiplePredictors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = receptions ~ fantasyPoints + ageCentered20 + ageCentered20Quadratic + 
+    years_of_experience + receiving_yards + receiving_tds + receiving_air_yards + 
+    receiving_yards_after_catch + racr + targets + target_share, 
+    data = player_stats_weekly, na.action = &quot;na.exclude&quot;)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.8797 -0.4349  0.0381  0.4452  6.4599 
+
+Coefficients:
+                               Estimate  Std. Error  t value
+(Intercept)                 -0.10449131  0.01371374   -7.619
+fantasyPoints                0.05245807  0.00070757   74.138
+ageCentered20                0.02253252  0.00383520    5.875
+ageCentered20Quadratic      -0.00073122  0.00022553   -3.242
+years_of_experience         -0.00413351  0.00237141   -1.743
+receiving_yards              0.01947592  0.00018229  106.843
+receiving_tds               -0.22472095  0.00825377  -27.226
+receiving_air_yards         -0.01027639  0.00009913 -103.671
+receiving_yards_after_catch  0.00907329  0.00023315   38.916
+racr                         0.00368592  0.00062808    5.869
+targets                      0.47245639  0.00226063  208.993
+target_share                -0.68861130  0.06835197  -10.074
+                                        Pr(&gt;|t|)    
+(Intercept)                   0.0000000000000258 ***
+fantasyPoints               &lt; 0.0000000000000002 ***
+ageCentered20                 0.0000000042406985 ***
+ageCentered20Quadratic                   0.00119 ** 
+years_of_experience                      0.08133 .  
+receiving_yards             &lt; 0.0000000000000002 ***
+receiving_tds               &lt; 0.0000000000000002 ***
+receiving_air_yards         &lt; 0.0000000000000002 ***
+receiving_yards_after_catch &lt; 0.0000000000000002 ***
+racr                          0.0000000044145407 ***
+targets                     &lt; 0.0000000000000002 ***
+target_share                &lt; 0.0000000000000002 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.8103 on 78996 degrees of freedom
+  (358301 observations deleted due to missingness)
+Multiple R-squared:  0.8697,    Adjusted R-squared:  0.8697 
+F-statistic: 4.795e+04 on 11 and 78996 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(effectsize<span class="sc">::</span><span class="fu">standardize_parameters</span>(linearRegression_multiplePredictors), <span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># Standardization method: refit
+
+Parameter                   | Std. Coef. |         95% CI
+---------------------------------------------------------
+(Intercept)                 |   4.92e-15 | [ 0.00,  0.00]
+fantasyPoints               |       0.18 | [ 0.18,  0.19]
+ageCentered20               |       0.03 | [ 0.02,  0.04]
+ageCentered20Quadratic      |      -0.02 | [-0.03, -0.01]
+years of experience         |  -5.54e-03 | [-0.01,  0.00]
+receiving yards             |       0.28 | [ 0.28,  0.29]
+receiving tds               |      -0.05 | [-0.05, -0.04]
+receiving air yards         |      -0.19 | [-0.19, -0.19]
+receiving yards after catch |       0.07 | [ 0.06,  0.07]
+racr                        |   7.57e-03 | [ 0.01,  0.01]
+targets                     |       0.68 | [ 0.67,  0.68]
+target share                |      -0.03 | [-0.03, -0.02]</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>model_predictions<span class="sc">$</span>linearRegression_multiplePredictors <span class="ot">&lt;-</span> <span class="fu">predict</span>(linearRegression_multiplePredictors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;projectionsWithActuals_weekly_wr&#39; not found</code></pre>
+<pre><code>Error in `$&lt;-.data.frame`(`*tmp*`, linearRegression_multiplePredictors, : replacement has 437309 rows, data has 34293</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate Accuracy of Predictions</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyOverall</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> model_predictions<span class="sc">$</span>linearRegression_multiplePredictors,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> model_predictions<span class="sc">$</span>actual,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dropUndefined =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error in abs(predicted): non-numeric argument to mathematical function</code></pre>
 </div>
 </div>
+<p>What percent of the variance is explained by the model’s predictions? How much more variance is accounted for by the additional predictors (compared to the model with just fantasy points as a predictor)?</p>
 </section>
-<section id="crowd-averaged-projections" class="level3" data-number="3.1.2">
-<h3 data-number="3.1.2" class="anchored" data-anchor-id="crowd-averaged-projections"><span class="header-section-number">3.1.2</span> Crowd-Averaged Projections</h3>
-<p>Provide the accuracy indices for predicting Wide Receivers’ fantasy points (<code>fantasyPoints</code>) from crowd-averaged projections of their fantasy points for that week (<code>points</code>):</p>
+<section id="machine-learning-elastic-net-regression" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="machine-learning-elastic-net-regression"><span class="header-section-number">3.3</span> Machine Learning: Elastic Net Regression</h2>
+<p>Now, we will use machine learning to predict WR fantasy points. Let’s use elastic net regression using <em>k</em>-fold cross-validation to prevent overfitting. Let’s use 10 folds.</p>
+<p>First, set up the folds:</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyOverall</span>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> crowdAveragedProjectionsWithActuals_weekly_wr<span class="sc">$</span>fantasyPoints, <span class="co"># predictor variable</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> crowdAveragedProjectionsWithActuals_weekly_wr<span class="sc">$</span>points, <span class="co"># outcome variable</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dropUndefined =</span> <span class="cn">TRUE</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">52242</span>) <span class="co"># for reproducibility</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>folds_kFold <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">group_vfold_cv</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  player_stats_weekly_example,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> player_id, <span class="co"># ensures all rows for a player are in the training set or all in the validation set for each fold</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">v =</span> INSERT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;crowdAveragedProjectionsWithActuals_weekly_wr&#39; not found</code></pre>
+<pre><code>Error: object &#39;INSERT&#39; not found</code></pre>
 </div>
 </div>
-<p>Which projections were more accurate according to <span class="math inline">\(R^2\)</span> and mean absolute error (MAE): individual sources of projections or crowd-averaged projections? What percent of the variance did the projections explain? Did they explain more or less than 50% of the variance? Based on that, how accurate would you say the projections are?</p>
-<p>-Crowd-averaged projections were more accurate by R² and MAE, 35–40%, in turn would be moderately-accurate.</p>
-</section>
-</section>
-<section id="calibration-plot" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="calibration-plot"><span class="header-section-number">3.2</span> Calibration Plot</h2>
-<section id="individual-sources-of-projections-1" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="individual-sources-of-projections-1"><span class="header-section-number">3.2.1</span> Individual Sources of Projections</h3>
+<p>Now estimate the models:</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#95 prediction interval based on LOESS model</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>calibrationLoessModel1 <span class="ot">&lt;-</span> msir<span class="sc">::</span><span class="fu">loess.sd</span>(</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> projectionsWithActuals_weekly_wr<span class="sc">$</span>raw_points,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> projectionsWithActuals_weekly_wr<span class="sc">$</span>fantasyPoints,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsigma =</span> <span class="fu">qnorm</span>(.<span class="dv">975</span>),</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">na.action =</span> <span class="st">&quot;na.exclude&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Recipe (Formula)</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>rec <span class="ot">&lt;-</span> recipes<span class="sc">::</span><span class="fu">recipe</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  fantasyPoints_nextGame <span class="sc">~</span> fantasyPoints_nextGame <span class="sc">~</span> fantasyPoints <span class="sc">+</span> ageCentered20 <span class="sc">+</span> ageCentered20Quadratic <span class="sc">+</span> years_of_experience <span class="sc">+</span> receiving_yards <span class="sc">+</span> receiving_tds <span class="sc">+</span> receiving_air_yards <span class="sc">+</span> receiving_yards_after_catch <span class="sc">+</span> racr <span class="sc">+</span> targets <span class="sc">+</span> target_share,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> player_stats_weekly_example)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define Model</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>enet_spec <span class="ot">&lt;-</span> </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  parsnip<span class="sc">::</span><span class="fu">linear_reg</span>(</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">penalty =</span> tune<span class="sc">::</span><span class="fu">tune</span>(),</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mixture =</span> tune<span class="sc">::</span><span class="fu">tune</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  parsnip<span class="sc">::</span><span class="fu">set_engine</span>(<span class="st">&quot;glmnet&quot;</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Workflow</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>enet_wf <span class="ot">&lt;-</span> workflows<span class="sc">::</span><span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  workflows<span class="sc">::</span><span class="fu">add_recipe</span>(rec) <span class="sc">%&gt;%</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  workflows<span class="sc">::</span><span class="fu">add_model</span>(enet_spec)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a regular grid for both penalty and mixture</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>grid_enet <span class="ot">&lt;-</span> dials<span class="sc">::</span><span class="fu">grid_regular</span>(</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  dials<span class="sc">::</span><span class="fu">penalty</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">1</span>)),</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  dials<span class="sc">::</span><span class="fu">mixture</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">5</span>) <span class="co"># 20 penalty values × 5 mixture values</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Tune the Grid</span></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>cv_results <span class="ot">&lt;-</span> tune<span class="sc">::</span><span class="fu">tune_grid</span>(</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>  enet_wf,</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> folds_kFold,</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> grid_enet,</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> yardstick<span class="sc">::</span><span class="fu">metric_set</span>(rmse, mae, rsq),</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> tune<span class="sc">::</span><span class="fu">control_grid</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;projectionsWithActuals_weekly_wr&#39; not found</code></pre>
+<pre><code>Error: object &#39;folds_kFold&#39; not found</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>calibrationLoessPredictionInterval1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> calibrationLoessModel1<span class="sc">$</span>x,</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> calibrationLoessModel1<span class="sc">$</span>y,</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> calibrationLoessModel1<span class="sc">$</span>lower,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> calibrationLoessModel1<span class="sc">$</span>upper)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View Cross-Validation metrics</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>tune<span class="sc">::</span><span class="fu">collect_metrics</span>(cv_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;calibrationLoessModel1&#39; not found</code></pre>
+<pre><code>Error: object &#39;cv_results&#39; not found</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>plotRangeMin1 <span class="ot">&lt;-</span> <span class="fu">min</span>(calibrationLoessModel1<span class="sc">$</span>lower, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify best penalty and mixture parameters</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>tune<span class="sc">::</span><span class="fu">select_best</span>(cv_results, <span class="at">metric =</span> <span class="st">&quot;rmse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;calibrationLoessModel1&#39; not found</code></pre>
+<pre><code>Error: object &#39;cv_results&#39; not found</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>plotRangeMax1 <span class="ot">&lt;-</span> <span class="fu">max</span>(calibrationLoessModel1<span class="sc">$</span>upper, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>tune<span class="sc">::</span><span class="fu">select_best</span>(cv_results, <span class="at">metric =</span> <span class="st">&quot;mae&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;calibrationLoessModel1&#39; not found</code></pre>
+<pre><code>Error: object &#39;cv_results&#39; not found</code></pre>
 </div>
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> projectionsWithActuals_weekly_wr,</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> raw_points,</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> fantasyPoints)) <span class="sc">+</span> </span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, plotRangeMax1),</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylim =</span> <span class="fu">c</span>(plotRangeMin1, plotRangeMax1),</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, plotRangeMax1, <span class="at">by =</span> <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, plotRangeMax1, <span class="at">by =</span> <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> calibrationLoessPredictionInterval1,</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> x,</span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> lower),</span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;red&quot;</span>,</span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span> <span class="co">#Lower estimate of 95% prediction interval of linear model</span></span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> calibrationLoessPredictionInterval1,</span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> x,</span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> upper),</span>
-<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;red&quot;</span>,</span>
-<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span> <span class="co">#Upper estimate of 95% prediction interval of linear model</span></span>
-<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(</span>
-<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;gam&quot;</span>,</span>
-<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">3</span>)[<span class="dv">3</span>],</span>
-<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">3</span>)[<span class="dv">1</span>],</span>
-<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> <span class="co">#95% confidence interval of GAM model</span></span>
-<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(</span>
-<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">slope =</span> <span class="dv">1</span>,</span>
-<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">intercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Projected Fantasy Points&quot;</span>,</span>
-<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Actual Fantasy Points&quot;</span>,</span>
-<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Calibration Plot for Weekly Projections of Wide Receivers&quot;</span></span>
-<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
-<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="co"># horizontal y-axis title</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tune<span class="sc">::</span><span class="fu">select_best</span>(cv_results, <span class="at">metric =</span> <span class="st">&quot;rsq&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;projectionsWithActuals_weekly_wr&#39; not found</code></pre>
+<pre><code>Error: object &#39;cv_results&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>best_penalty <span class="ot">&lt;-</span> tune<span class="sc">::</span><span class="fu">select_best</span>(cv_results, <span class="at">metric =</span> <span class="st">&quot;mae&quot;</span>) <span class="co"># choose the best penalty and mixture parameters based on MAE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;cv_results&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Finalize Workflow with Best Penalty</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>final_wf <span class="ot">&lt;-</span> tune<span class="sc">::</span><span class="fu">finalize_workflow</span>(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  enet_wf,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  best_penalty)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;best_penalty&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Final Model on Training Data</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>final_model <span class="ot">&lt;-</span> workflows<span class="sc">::</span><span class="fu">fit</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  final_wf,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> player_stats_weekly_example)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;final_wf&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View Coefficients</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>final_model <span class="sc">%&gt;%</span> </span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  workflows<span class="sc">::</span><span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;final_model&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>model_predictions<span class="sc">$</span>elasticNet <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  final_model,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_data =</span> player_stats_weekly_example)<span class="sc">$</span>.pred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object &#39;final_model&#39; not found</code></pre>
+</div>
+<details open class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate Accuracy of Predictions</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>petersenlab<span class="sc">::</span><span class="fu">accuracyOverall</span>(</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">predicted =</span> model_predictions<span class="sc">$</span>elasticNet,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">actual =</span> model_predictions<span class="sc">$</span>actual,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dropUndefined =</span> <span class="cn">TRUE</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error in abs(predicted): non-numeric argument to mathematical function</code></pre>
 </div>
 </div>
-<p>Are the projections calibrated? Describe any miscalibration.</p>
-<p>-The predictions are meerly accurate until we hit around 20 fantasy points, and then the curve starts to fall off, indiciating that we overshot over projections.</p>
-</section>
-<section id="crowd-averaged-projections-1" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="crowd-averaged-projections-1"><span class="header-section-number">3.2.2</span> Crowd-Averaged Projections</h3>
+<p>What percent variance did the machine learning model explain? Which model had the best discrimination in terms of <span class="math inline">\(R^2\)</span>? Which model had the best calibration in terms of MAE and RMSE?</p>
+<p>Now, depict a calibration plot of the model’s predicted vs actual values:</p>
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#95 prediction interval based on LOESS model</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>calibrationLoessModel2 <span class="ot">&lt;-</span> msir<span class="sc">::</span><span class="fu">loess.sd</span>(</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> crowdAveragedProjectionsWithActuals_weekly_wr<span class="sc">$</span>points,</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> crowdAveragedProjectionsWithActuals_weekly_wr<span class="sc">$</span>fantasyPoints,</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsigma =</span> <span class="fu">qnorm</span>(.<span class="dv">975</span>),</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">na.action =</span> <span class="st">&quot;na.exclude&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate combined range for axes</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>axis_limits <span class="ot">&lt;-</span> <span class="fu">range</span>(<span class="fu">c</span>(model_predictions<span class="sc">$</span>elasticNet, model_predictions<span class="sc">$</span>actual), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  model_predictions,</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> elasticNet,</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> actual)) <span class="sc">+</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">2</span>,</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">slope =</span> <span class="dv">1</span>,</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">intercept =</span> <span class="dv">0</span>,</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>(</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlim =</span> axis_limits,</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylim =</span> axis_limits) <span class="sc">+</span></span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Predicted vs Actual Fantasy Points (Elastic Net Model)&quot;</span>,</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Predicted Fantasy Points&quot;</span>,</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Actual Fantasy Points&quot;</span></span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="co"># horizontal y-axis title</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;crowdAveragedProjectionsWithActuals_weekly_wr&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>calibrationLoessPredictionInterval2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> calibrationLoessModel2<span class="sc">$</span>x,</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> calibrationLoessModel2<span class="sc">$</span>y,</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> calibrationLoessModel2<span class="sc">$</span>lower,</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> calibrationLoessModel2<span class="sc">$</span>upper)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;calibrationLoessModel2&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>plotRangeMin2 <span class="ot">&lt;-</span> <span class="fu">min</span>(calibrationLoessModel2<span class="sc">$</span>lower, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;calibrationLoessModel2&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>plotRangeMax2 <span class="ot">&lt;-</span> <span class="fu">max</span>(calibrationLoessModel2<span class="sc">$</span>upper, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;calibrationLoessModel2&#39; not found</code></pre>
-</div>
-<details open class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> crowdAveragedProjectionsWithActuals_weekly_wr,</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> points,</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> fantasyPoints)) <span class="sc">+</span> </span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, plotRangeMax2),</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylim =</span> <span class="fu">c</span>(plotRangeMin2, plotRangeMax2),</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, plotRangeMax2, <span class="at">by =</span> <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, plotRangeMax2, <span class="at">by =</span> <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> calibrationLoessPredictionInterval2,</span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> x,</span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> lower),</span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;red&quot;</span>,</span>
-<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span> <span class="co">#Lower estimate of 95% prediction interval of linear model</span></span>
-<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> calibrationLoessPredictionInterval2,</span>
-<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> x,</span>
-<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> upper),</span>
-<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;red&quot;</span>,</span>
-<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span> <span class="co">#Upper estimate of 95% prediction interval of linear model</span></span>
-<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(</span>
-<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;gam&quot;</span>,</span>
-<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">3</span>)[<span class="dv">3</span>],</span>
-<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">3</span>)[<span class="dv">1</span>],</span>
-<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> <span class="co">#95% confidence interval of GAM model</span></span>
-<span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(</span>
-<span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">slope =</span> <span class="dv">1</span>,</span>
-<span id="cb46-33"><a href="#cb46-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">intercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb46-34"><a href="#cb46-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb46-35"><a href="#cb46-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Projected Fantasy Points&quot;</span>,</span>
-<span id="cb46-36"><a href="#cb46-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Actual Fantasy Points&quot;</span>,</span>
-<span id="cb46-37"><a href="#cb46-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Calibration Plot for Weekly Projections of Wide Receivers&quot;</span></span>
-<span id="cb46-38"><a href="#cb46-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb46-39"><a href="#cb46-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
-<span id="cb46-40"><a href="#cb46-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="co"># horizontal y-axis title</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object &#39;crowdAveragedProjectionsWithActuals_weekly_wr&#39; not found</code></pre>
+<pre><code>Error in `geom_point()`:
+! Problem while computing aesthetics.
+ℹ Error occurred in the 1st layer.
+Caused by error:
+! object &#39;elasticNet&#39; not found</code></pre>
 </div>
 </div>
-<p>Which show better calibration: the individual sources of projections or the crowd-averaged projections? Based on all of the available evidence, which would you say is more accurate (and why)?</p>
-<p>-Crowd-averaged projections show better calibration—the smoothed line hugs the line of reference more closely with a tighter band than most individual sources.</p>
-</section>
+<p>Would you say the machine learning model was accurate? Why or why not?</p>
 </section>
 </section>
 <section id="session-info" class="level1" data-number="4">
@@ -3717,7 +3758,7 @@ window.Quarto = {
 <div class="cell">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.5.1 (2025-06-13 ucrt)
@@ -3741,47 +3782,52 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] lubridate_1.9.4    forcats_1.0.0      stringr_1.5.2      readr_2.1.5       
- [5] tibble_3.3.0       tidyverse_2.0.0    yardstick_1.3.2    workflowsets_1.1.1
- [9] workflows_1.3.0    tune_2.0.0         tidyr_1.3.1        tailor_0.1.0      
-[13] rsample_1.3.1      recipes_1.3.1      purrr_1.1.0        parsnip_1.3.3     
-[17] modeldata_1.5.1    infer_1.0.9        ggplot2_3.5.2      dplyr_1.1.4       
-[21] dials_1.4.2        scales_1.4.0       broom_1.0.9        tidymodels_1.4.1  
-[25] msir_1.3.3         viridis_0.6.5      viridisLite_0.4.2  magrittr_2.0.3    
-[29] pROC_1.19.0.1      petersenlab_1.2.0 
+ [1] knitr_1.50         lubridate_1.9.4    forcats_1.0.0      stringr_1.5.2     
+ [5] readr_2.1.5        tibble_3.3.0       tidyverse_2.0.0    effectsize_1.0.1  
+ [9] gpboost_1.6.2      R6_2.6.1           LongituRF_0.9      yardstick_1.3.2   
+[13] workflowsets_1.1.1 workflows_1.3.0    tune_2.0.0         tidyr_1.3.1       
+[17] tailor_0.1.0       rsample_1.3.1      recipes_1.3.1      purrr_1.1.0       
+[21] parsnip_1.3.3      modeldata_1.5.1    infer_1.0.9        ggplot2_3.5.2     
+[25] dplyr_1.1.4        dials_1.4.2        scales_1.4.0       broom_1.0.9       
+[29] tidymodels_1.4.1   powerjoin_0.1.0    missRanger_2.6.1   future_1.67.0     
+[33] petersenlab_1.2.0 
 
 loaded via a namespace (and not attached):
- [1] Rdpack_2.6.4        DBI_1.2.3           mnormt_2.1.1       
- [4] gridExtra_2.3       rlang_1.1.6         furrr_0.3.1        
- [7] compiler_4.5.1      vctrs_0.6.5         reshape2_1.4.4     
-[10] lhs_1.2.0           quadprog_1.5-8      pkgconfig_2.0.3    
-[13] fastmap_1.2.0       backports_1.5.0     pbivnorm_0.6.0     
-[16] rmarkdown_2.29      tzdb_0.5.0          prodlim_2025.04.28 
-[19] nloptr_2.2.1        xfun_0.52           jsonlite_2.0.0     
-[22] psych_2.5.6         parallel_4.5.1      lavaan_0.6-19      
-[25] cluster_2.1.8.1     R6_2.6.1            stringi_1.8.7      
-[28] RColorBrewer_1.1-3  parallelly_1.45.1   boot_1.3-32        
-[31] rpart_4.1.24        Rcpp_1.1.0          knitr_1.50         
-[34] future.apply_1.20.0 base64enc_0.1-3     timechange_0.3.0   
-[37] Matrix_1.7-4        splines_4.5.1       nnet_7.3-20        
-[40] tidyselect_1.2.1    rstudioapi_0.17.1   yaml_2.3.10        
-[43] timeDate_4041.110   codetools_0.2-20    listenv_0.9.1      
-[46] lattice_0.22-7      plyr_1.8.9          withr_3.0.2        
-[49] evaluate_1.0.5      foreign_0.8-90      future_1.67.0      
-[52] survival_3.8-3      mclust_6.1.1        pillar_1.11.0      
-[55] checkmate_2.3.3     stats4_4.5.1        reformulas_0.4.1   
-[58] generics_0.1.4      hms_1.1.3           mix_1.0-13         
-[61] minqa_1.2.8         globals_0.18.0      xtable_1.8-4       
-[64] class_7.3-23        glue_1.8.0          Hmisc_5.2-3        
-[67] tools_4.5.1         data.table_1.17.8   lme4_1.1-37        
-[70] gower_1.0.2         mvtnorm_1.3-3       grid_4.5.1         
-[73] mitools_2.4         rbibutils_2.3       ipred_0.9-15       
-[76] colorspace_2.1-1    nlme_3.1-168        htmlTable_2.4.3    
-[79] Formula_1.2-5       cli_3.6.5           DiceDesign_1.10    
-[82] lava_1.8.1          gtable_0.3.6        GPfit_1.0-9        
-[85] digest_0.6.37       htmlwidgets_1.6.4   farver_2.1.2       
-[88] htmltools_0.5.8.1   lifecycle_1.0.4     hardhat_1.4.2      
-[91] MASS_7.3-65        </code></pre>
+  [1] RColorBrewer_1.1-3   rstudioapi_0.17.1    jsonlite_2.0.0      
+  [4] datawizard_1.2.0     magrittr_2.0.3       TH.data_1.1-4       
+  [7] estimability_1.5.1   farver_2.1.2         nloptr_2.2.1        
+ [10] rmarkdown_2.29       vctrs_0.6.5          minqa_1.2.8         
+ [13] base64enc_0.1-3      htmltools_0.5.8.1    Formula_1.2-5       
+ [16] parallelly_1.45.1    htmlwidgets_1.6.4    sandwich_3.1-1      
+ [19] plyr_1.8.9           zoo_1.8-14           emmeans_1.11.2-8    
+ [22] lifecycle_1.0.4      pkgconfig_2.0.3      Matrix_1.7-4        
+ [25] fastmap_1.2.0        rbibutils_2.3        digest_0.6.37       
+ [28] colorspace_2.1-1     furrr_0.3.1          Hmisc_5.2-3         
+ [31] latex2exp_0.9.6      randomForest_4.7-1.2 RJSONIO_2.0.0       
+ [34] timechange_0.3.0     compiler_4.5.1       withr_3.0.2         
+ [37] htmlTable_2.4.3      backports_1.5.0      DBI_1.2.3           
+ [40] psych_2.5.6          MASS_7.3-65          lava_1.8.1          
+ [43] tools_4.5.1          pbivnorm_0.6.0       foreign_0.8-90      
+ [46] future.apply_1.20.0  nnet_7.3-20          glue_1.8.0          
+ [49] quadprog_1.5-8       nlme_3.1-168         grid_4.5.1          
+ [52] checkmate_2.3.3      cluster_2.1.8.1      reshape2_1.4.4      
+ [55] generics_0.1.4       gtable_0.3.6         tzdb_0.5.0          
+ [58] class_7.3-23         hms_1.1.3            data.table_1.17.8   
+ [61] utf8_1.2.6           pillar_1.11.0        mitools_2.4         
+ [64] splines_4.5.1        lhs_1.2.0            lattice_0.22-7      
+ [67] survival_3.8-3       tidyselect_1.2.1     mix_1.0-13          
+ [70] reformulas_0.4.1     gridExtra_2.3        stats4_4.5.1        
+ [73] xfun_0.52            hardhat_1.4.2        timeDate_4041.110   
+ [76] stringi_1.8.7        DiceDesign_1.10      yaml_2.3.10         
+ [79] boot_1.3-32          evaluate_1.0.5       codetools_0.2-20    
+ [82] cli_3.6.5            rpart_4.1.24         xtable_1.8-4        
+ [85] parameters_0.28.1    Rdpack_2.6.4         lavaan_0.6-19       
+ [88] Rcpp_1.1.0           globals_0.18.0       coda_0.19-4.1       
+ [91] parallel_4.5.1       gower_1.0.2          bayestestR_0.17.0   
+ [94] GPfit_1.0-9          lme4_1.1-37          listenv_0.9.1       
+ [97] viridisLite_0.4.2    mvtnorm_1.3-3        ipred_0.9-15        
+[100] prodlim_2025.04.28   insight_1.4.2        rlang_1.1.6         
+[103] multcomp_1.4-28      mnormt_2.1.1        </code></pre>
 </div>
 </div>
 </section>

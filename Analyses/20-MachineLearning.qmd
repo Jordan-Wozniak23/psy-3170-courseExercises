@@ -132,6 +132,8 @@ What percent of the variance is explained by the model's predictions?
 Now, let's use linear regression with multiple predictors (`ageCentered20`, `ageCentered20Quadratic`, `years_of_experience`, `receiving_yards`, `receiving_tds`, `receiving_air_yards`, `receiving_yards_after_catch`, `racr`, `targets`, and `target_share`) to predict their fantasy points in the subsequent game (`fantasyPoints_nextGame`).
 
 ```{r}
+
+
 linearRegression_multiplePredictors <- lm(
   receptions ~ fantasyPoints + ageCentered20 + ageCentered20Quadratic + years_of_experience + receiving_yards + receiving_tds + receiving_air_yards + receiving_yards_after_catch + racr + targets + target_share, # RACR = receiving_yards / receiving_air_yards
   data = player_stats_weekly,
